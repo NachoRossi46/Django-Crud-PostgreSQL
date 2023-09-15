@@ -1,0 +1,72 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Django Crud </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                <h1 class="display-6 fw-bold"> Tareas </h1>
+
+                <form action="{% url 'crearTarea' %}" method="POST" class="card card-body bg-secondary">
+                    {% csrf_token %}
+                    <label for="titulo">Titulo:</label>
+                    <input type="text" name="titulo" placeholder="Ingrese una tarea" class="form-control mb-2">
+                    <label for="descripcion">Descripcion:</label>
+                    <textarea name="descripcion" rows="3" placeholder="Ingrese una descripcion" class="form-control mb-2"></textarea>
+                    <button class="btn btn-success"> Guardar </button>
+                </form>
+
+                {% for tarea in tareas %}
+    <div class="card card-body text-black mt-2 d-flex flex-row justify-content-between">
+        <div>
+            <h4>{{tarea.title}}</h4>
+            <p>{{tarea.description}}</p>
+        </div>
+        <div>
+            <form action="{% url 'eliminarTarea' tarea.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm"> Eliminar </button>
+            </form>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editarTareaModal{{tarea.id}}">
+                Editar
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editarTareaModal{{tarea.id}}" tabindex="-1" aria-labelledby="editarTareaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarTareaModalLabel">Editar Tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'editarTarea' tarea.id %}" method="POST" class="card card-body bg-secondary">
+                        {% csrf_token %}
+                        <label for="titulo">Titulo:</label>
+                        <input type="text" name="titulo" value="{{tarea.title}}" class="form-control mb-2">
+                        <label for="descripcion">Descripcion:</label>
+                        <textarea name="descripcion" rows="3" class="form-control mb-2">{{tarea.description}}</textarea>
+                        <button class="btn btn-success"> Guardar </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <h3 class="display-4 text-center"> No hay tareas </h3>
+{% endfor %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>
